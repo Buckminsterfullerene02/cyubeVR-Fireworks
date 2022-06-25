@@ -1,0 +1,17 @@
+{    
+    "Name": "Green Firework Block",
+    "CreatorName": "Buckminsterfullerene",
+    "UniqueID": 6942071,
+    "Recipe": {
+      "Array" : [6,41],
+      "SizeX": 1,
+      "SizeY": 1,
+      "SizeZ": 2
+  },
+    "Yield": 1,
+    "SimilarTo": 2,
+    "Textures": {
+        "Mode": 1,
+        "WithNormals" : false
+      }
+  }

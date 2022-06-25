@@ -1,0 +1,17 @@
+{    
+    "Name": "Red Firework Block",
+    "CreatorName": "Buckminsterfullerene",
+    "UniqueID": 6942072,
+    "Recipe": {
+      "Array" : [6,48],
+      "SizeX": 1,
+      "SizeY": 1,
+      "SizeZ": 2
+  },
+    "Yield": 1,
+    "SimilarTo": 2,
+    "Textures": {
+        "Mode": 1,
+        "WithNormals" : false
+      }
+  }
