@@ -32,21 +32,11 @@ void Event_BlockDestroyed(CoordinateInBlocks At, UniqueID CustomBlockID, bool Mo
 void Event_BlockHitByTool(CoordinateInBlocks At, UniqueID CustomBlockID, wString ToolName, CoordinateInCentimeters ExactHitLocation, bool ToolHeldByHandLeft)
 {
 	if (ToolName == L"T_Stick" || ToolName == L"T_Arrow") {
-		std::wstring path = GetThisModInstallFolderPath();
-		int count = 0;
-		for (unsigned long long i = path.length() - 1; i > 0; i--) {
-			if (path[i] == '\\') count++;
-			if (count == 3) {
-				path = path.substr(0, i);
-				break;
-			}
-		}
-		path.append(L"\\UE4Mods\\Fireworks__V1\\ID.txt");
-		if (std::ofstream modInfo(path, std::ios::trunc); modInfo) {
-			modInfo << CustomBlockID;
-			modInfo.close();	
-		}
-		SpawnBPModActor(At + CoordinateInBlocks(0, 0, 1), L"Fireworks", L"Firework");
+		if (CustomBlockID == ThisModUniqueIDs[1]) SpawnBPModActor(At + CoordinateInBlocks(0, 0, 1), L"Fireworks", L"BFirework");
+		else if (CustomBlockID == ThisModUniqueIDs[2]) SpawnBPModActor(At + CoordinateInBlocks(0, 0, 1), L"Fireworks", L"GFirework");
+		else if (CustomBlockID == ThisModUniqueIDs[3]) SpawnBPModActor(At + CoordinateInBlocks(0, 0, 1), L"Fireworks", L"RFirework");
+		else if (CustomBlockID == ThisModUniqueIDs[4]) SpawnBPModActor(At + CoordinateInBlocks(0, 0, 1), L"Fireworks", L"WFirework");
+		else SpawnBPModActor(At + CoordinateInBlocks(0, 0, 1), L"Fireworks", L"RGBFirework");
 	}
 }
 
