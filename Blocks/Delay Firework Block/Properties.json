@@ -1,0 +1,17 @@
+{    
+    "Name": "Delay Firework Block",
+    "CreatorName": "Buckminsterfullerene",
+    "UniqueID": 6942074,
+    "Recipe": {
+      "Array" : [6],
+      "SizeX": 1,
+      "SizeY": 1,
+      "SizeZ": 2
+  },
+    "Yield": 1,
+    "SimilarTo": 1,
+    "Textures": {
+        "Mode": 1,
+        "WithNormals" : false
+      }
+  }
