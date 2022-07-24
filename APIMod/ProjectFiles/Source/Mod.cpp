@@ -25,10 +25,10 @@ void Event_BlockPlaced(CoordinateInBlocks At, UniqueID CustomBlockID, bool Moved
 	else hintText = L"Hit me with a stick or arrow to spawn a firework!";
 	SpawnHintText(At + CoordinateInBlocks(0, 0, 1), hintText, 2);
 
-	// If it is a delay block, add it to the list of delay block IDs (with coordinates to track what it is)
+	// If it is a delay block, add it to the list of delay blocks in the world
 	if (CustomBlockID == ThisModUniqueIDs[5])
 	{
-		
+		Custom::SaveDelayConfig(At, 1000, GetWorldName());
 	}
 }
 
@@ -36,12 +36,10 @@ void Event_BlockPlaced(CoordinateInBlocks At, UniqueID CustomBlockID, bool Moved
 // Run every time a block is destroyed
 void Event_BlockDestroyed(CoordinateInBlocks At, UniqueID CustomBlockID, bool Moved)
 {
-	// If it is a delay block, load in the list of IDs from the save file
-	// Check for the delay block with the same coordinate as this destroyed one
-	// If it is, delete it
+	// If it is a delay block, delete it from the list of delay blocks in the world
 	if (CustomBlockID == ThisModUniqueIDs[5])
 	{
-		
+		Custom::CheckDelayBlock(At, GetWorldName(), true);
 	}
 }
 
@@ -51,7 +49,8 @@ void Event_BlockHitByTool(CoordinateInBlocks At, UniqueID CustomBlockID, wString
 {
 	if (ToolName.starts_with(L"T_Pickaxe_") && CustomBlockID == ThisModUniqueIDs[5])
 	{
-		// Update the delay block in the save file with the current coordinate, that it has been hit so it is the one to be changed 
+		// Update the delay block in the config that it has been hit so it is the one to be changed 
+		Custom::CheckDelayBlock(At, GetWorldName(), false, true);
 		
 		// TODO: Make sure that the mod saves the new value to the save file
 		SpawnBPModActor(At + CoordinateInBlocks(0, 0, 1), L"Fireworks", L"DelayMenu");
@@ -95,6 +94,9 @@ void Event_BlockHitByTool(CoordinateInBlocks At, UniqueID CustomBlockID, wString
 				}
 			}
 		}
+
+		// Update the delay block in the config that it is no longer hit for processing
+		Custom::CheckDelayBlock(At, GetWorldName(), false, false);
 	}
 }
 

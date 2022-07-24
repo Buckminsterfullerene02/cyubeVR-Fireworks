@@ -15,6 +15,7 @@
     <ClInclude Include="Source\GameAPI.cpp" />
     <ClCompile Include="Source\Custom.cpp" />
     <ClCompile Include="Source\GameFunctions.cpp" />
+    <ClInclude Include="Source\json.hpp" />
     <ClInclude Include="Source\Mod.cpp" />
     <ClCompile Include="Source\Internals.cpp" />
   </ItemGroup>
