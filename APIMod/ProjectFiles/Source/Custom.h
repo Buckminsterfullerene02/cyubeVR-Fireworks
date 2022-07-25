@@ -3,6 +3,7 @@
 #include "GameAPI.h"
 
 #include <vector>
+#include <map>
 
 class Custom
 {
@@ -16,7 +17,7 @@ public:
     /*
      * Check for a delay block in the delay config file.
      */
-    static void CheckDelayBlock(const CoordinateInBlocks& coords, const std::wstring& saveName, bool isDelete, bool isActive = false);
+    static std::pair<int, bool> CheckDelayBlock(const CoordinateInBlocks& coords, const std::wstring& saveName);
  
     /*
      * Makes a new delay block entry in the delay config file, based off the save name.

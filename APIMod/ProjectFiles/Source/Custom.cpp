@@ -11,12 +11,12 @@ void Custom::LogCoordinate(const std::wstring& text, CoordinateInBlocks coords)
 		+ std::to_wstring(coords.Z));
 }
 
-void Custom::CheckDelayBlock(const CoordinateInBlocks& coords, const std::wstring& saveName, bool isDelete, bool isActive = false)
+std::pair<int, bool> Custom::CheckDelayBlock(const CoordinateInBlocks& coords, const std::wstring& saveName)
 {
 	/* File is in the following format:
-	 * x coord, y coord, z coord, delay, is active\n
+	 * x coord, y coord, z coord, delay\n
 	 * e.g.
-	 * 1,1,1,1000,true\n3,2,2,1000,false\n4,3,3,1000,false\n
+	 * 1,1,1,1000\n3,2,2,1000\n4,3,3,1000\n
 	*/
 	std::wstring path = GetFilePath(saveName);
 	if (std::ifstream file(path); file.is_open())
@@ -37,25 +37,21 @@ void Custom::CheckDelayBlock(const CoordinateInBlocks& coords, const std::wstrin
 				&& tokens[1] == std::to_string(coords.Y)
 				&& tokens[2] == std::to_string(coords.Z))
 			{
-				// Block is in the file, so update the block line
 				file.close();
 				std::ofstream out(path, std::ios::out | std::ios::trunc);
-				if (isDelete) out << line << std::endl;
-				else
-				{
-					out << std::to_string(coords.X) << ","
-					<< std::to_string(coords.Y) << ","
-					<< std::to_string(coords.Z) << ","
-					<< tokens[3] << ","
-					<< std::to_string(isActive) << std::endl;
-				}
+				std::string newLine = std::to_string(coords.X) + "," + std::to_string(coords.Y) + "," +
+					std::to_string(coords.Z) + "," + tokens[3] + "\n";
+
+				// Delete the current line
+				line.replace(line.find(newLine), newLine.length(), "");
 				out.close();
-				return;
+				return std::pair<int, bool>{ token[3], true };
 			}
 		}
 		file.close();
 	}
 	else Log(L"Could not open file " + path);
+	return std::pair<int, bool>{ 0, false };
 }
 
 void Custom::SaveDelayConfig(const CoordinateInBlocks& coords, const int& delay, const std::wstring& saveName)
@@ -69,7 +65,7 @@ void Custom::SaveDelayConfig(const CoordinateInBlocks& coords, const int& delay,
 	{
 		// Add block to file - if it already exists (it shouldn't), it will be overwritten
 		// The isHit is always going to be false when created
-		file << coords.X << "," << coords.Y << "," << coords.Z << "," << delay << "," << false << std::endl;
+		file << coords.X << "," << coords.Y << "," << coords.Z << "," << delay << "\n";
 		file.close();
 	}
 	else Log(L"Failed to open file " + GetFilePath(saveName));
@@ -144,6 +140,8 @@ CoordinateInBlocks Custom::GetHighestNeighbourDistance(const std::vector<Coordin
 std::wstring Custom::GetFilePath(const std::wstring& saveName)
 {
 	std::wstring path = GetThisModInstallFolderPath();
+
+	// Navigate back to the APIMods/UE4Mods root folder
 	int count = 0;
 	for (unsigned long long i = path.length() - 1; i > 0; i--) {
 		if (path[i] == '\\') count++;
@@ -152,8 +150,7 @@ std::wstring Custom::GetFilePath(const std::wstring& saveName)
 			break;
 		}
 	}
-	path.append(L"\\UE4Mods\\Fireworks__V1\\");
-	path.append(saveName + L"\\DelayConfig.json");
+	path.append(L"\\UE4Mods\\Fireworks__V1\\" + saveName + L"\\DelayConfig.txt");
 	return path;
 }
 

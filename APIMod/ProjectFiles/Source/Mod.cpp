@@ -1,4 +1,3 @@
-#include <fstream>
 #include <thread>
 #include <chrono>
 
@@ -29,6 +28,7 @@ void Event_BlockPlaced(CoordinateInBlocks At, UniqueID CustomBlockID, bool Moved
 	if (CustomBlockID == ThisModUniqueIDs[5])
 	{
 		Custom::SaveDelayConfig(At, 1000, GetWorldName());
+		SpawnBPModActor(At + CoordinateInBlocks(0, 0, 0), L"Fireworks", L"DelayMenu");
 	}
 }
 
@@ -37,10 +37,7 @@ void Event_BlockPlaced(CoordinateInBlocks At, UniqueID CustomBlockID, bool Moved
 void Event_BlockDestroyed(CoordinateInBlocks At, UniqueID CustomBlockID, bool Moved)
 {
 	// If it is a delay block, delete it from the list of delay blocks in the world
-	if (CustomBlockID == ThisModUniqueIDs[5])
-	{
-		Custom::CheckDelayBlock(At, GetWorldName(), true);
-	}
+	if (CustomBlockID == ThisModUniqueIDs[5]) Custom::CheckDelayBlock(At, GetWorldName());
 }
 
 
@@ -49,11 +46,8 @@ void Event_BlockHitByTool(CoordinateInBlocks At, UniqueID CustomBlockID, wString
 {
 	if (ToolName.starts_with(L"T_Pickaxe_") && CustomBlockID == ThisModUniqueIDs[5])
 	{
-		// Update the delay block in the config that it has been hit so it is the one to be changed 
-		Custom::CheckDelayBlock(At, GetWorldName(), false, true);
-		
-		// TODO: Make sure that the mod saves the new value to the save file
-		SpawnBPModActor(At + CoordinateInBlocks(0, 0, 1), L"Fireworks", L"DelayMenu");
+		// Spawn the delay menu 
+		SpawnBPModActor(At + CoordinateInBlocks(0, 0, 0), L"Fireworks", L"DelayMenu");
 	}
 	
 	if (ToolName == L"T_Stick" || ToolName == L"T_Arrow")
@@ -68,7 +62,7 @@ void Event_BlockHitByTool(CoordinateInBlocks At, UniqueID CustomBlockID, wString
 
 		SpawnBPModActor(At + CoordinateInBlocks(0, 0, 1), L"Fireworks", actorName);
 
-		// We don't want to run the rest of the code for a delay block
+		// TODO: Do we not want to run the rest of the code for a delay block?
 		if (actorName == L"DFirework") return;
 		
 		const std::vector<CoordinateInBlocks> surroundingBlocks = Custom::CheckSurroundingBlocks(At, {},
@@ -88,15 +82,12 @@ void Event_BlockHitByTool(CoordinateInBlocks At, UniqueID CustomBlockID, wString
 			{
 				if (surroundingBlock.X == a || surroundingBlock.Y == a || surroundingBlock.Z == a)
 				{
-					// TODO: Get the sleep time from the delay block settings file (of the current coordinate, if it is present)
-					std::this_thread::sleep_for(std::chrono::milliseconds(500));
+					std::pair<int, bool> out = Custom::CheckDelayBlock(surroundingBlock, GetWorldName());
+					if (out.second) std::this_thread::sleep_for(std::chrono::milliseconds(out.first));
 					SpawnBPModActor(surroundingBlock + CoordinateInBlocks(0, 0, 1), L"Fireworks", actorName);
 				}
 			}
 		}
-
-		// Update the delay block in the config that it is no longer hit for processing
-		Custom::CheckDelayBlock(At, GetWorldName(), false, false);
 	}
 }
 
