@@ -28,7 +28,7 @@ void Event_BlockPlaced(CoordinateInBlocks At, UniqueID CustomBlockID, bool Moved
 	if (CustomBlockID == ThisModUniqueIDs[5])
 	{
 		Custom::SaveDelayConfig(At, 1000, GetWorldName());
-		SpawnBPModActor(At + CoordinateInBlocks(0, 0, 0), L"Fireworks", L"DelayMenu");
+		SpawnBPModActor(At + CoordinateInBlocks(0, 0, 1), L"Fireworks", L"DelayMenu");
 	}
 }
 
